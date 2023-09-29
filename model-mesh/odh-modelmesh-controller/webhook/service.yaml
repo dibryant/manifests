@@ -1,4 +1,4 @@
-# Copyright 2022 IBM Corporation
+# Copyright 2021 IBM Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,18 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-apiVersion: serving.kserve.io/v1beta1
-kind: InferenceService
+apiVersion: v1
+kind: Service
 metadata:
-  name: example-sklearn-isvc
+  name: modelmesh-webhook-server-service
   annotations:
-    serving.kserve.io/deploymentMode: ModelMesh
+    service.beta.openshift.io/serving-cert-secret-name: modelmesh-webhook-server-cert
 spec:
-  predictor:
-    model:
-      modelFormat:
-        name: sklearn
-      runtime: mlserver-0.x
-      storage:
-        key: aws-connection-minio-data-connection
-        path: sklearn/model.joblib
+  ports:
+    - port: 9443
+      protocol: TCP
+      targetPort: webhook
+  selector:
+    control-plane: modelmesh-controller
